@@ -4,7 +4,11 @@
 
 void Log::vlog(LogLevel level, const char* tag, const char* text, va_list args) {
     char buffer[4096];
-    vsnprintf(buffer, sizeof(buffer), text, args);
+    int len = vsnprintf(buffer, sizeof(buffer), text, args);
+    if (len > sizeof(buffer))
+        len = sizeof(buffer);
+    while (len > 0 && (buffer[len - 1] == '\r' || buffer[len - 1] == '\n'))
+        buffer[--len] = '\0';
 
     char tbuf[128];
     tbuf[0] = '\0';
@@ -13,6 +17,5 @@ void Log::vlog(LogLevel level, const char* tag, const char* text, va_list args) 
     tm tm;
     localtime_r(&t, &tm);
     strftime(tbuf, sizeof(tbuf), "%H:%M:%S", &tm);
-    printf("%s %s [%s] %s\n", tbuf, getLogLevelString(level), tag, buffer);
-    fflush(stdout);
+    printf("%s %-5s [%s] %s\n", tbuf, getLogLevelString(level), tag, buffer);
 }
