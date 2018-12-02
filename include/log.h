@@ -5,7 +5,7 @@
 #include <cstdarg>
 
 #define LogFuncDef(name, logLevel) \
-    static void name(const char* tag, const char* text, ...) { \
+    static void name(const char* tag, const char* text, ...) __attribute__ ((format (printf, 2, 3))) { \
         va_list args; \
         va_start(args, text); \
         vlog(logLevel, tag, text, args); \
